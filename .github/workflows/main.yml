@@ -1,0 +1,24 @@
+name: Download Docker Images
+on: workflow_dispatch # 允许手动点击按钮触发
+
+jobs:
+  download-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull Docker Images
+        run: |
+          # 在这里拉取你需要的镜像，使用的是 GitHub 的海外网络
+          docker pull postgres:16
+          docker pull redis:7
+
+      - name: Save Images to Tar
+        run: |
+          # 将这两个镜像打包成一个文件 images.tar
+          docker save -o images.tar postgres:16 redis:7
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-offline-images
+          path: images.tar
+          retention-days: 1
